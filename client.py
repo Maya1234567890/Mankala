@@ -18,13 +18,14 @@ except timeout:
 else:
     while 1:
         data = tcpcliesock.recv(BUFSIZ)
+        # another recv for game started.
         print(data.decode('utf-8'))
         data = {}
         while 1:
             key = input(">>")
-            if key == "": exit()
+            if key == "": break
             value = input(">>")
-            if value == "": value = True
+            if value == "": value = 0
             data[key] = value
         tcpcliesock.send(json.dumps(data).encode('utf-8'))
 
