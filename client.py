@@ -64,7 +64,7 @@ try:  # try to connect to the server's socket.
     tcpcliesock.connect(ADDR)
 except ConnectionRefusedError:
     print("The server is closed")
-except timeout:
+except TimeoutError:
     print("Time ran out. Please try again later")
 finally:
     tcpcliesock.settimeout(None)
@@ -94,4 +94,3 @@ while not app.exec_():
     # tcpcliesock.send(json.dumps({"type": "logout"}).encode('utf-8'))
     tcpcliesock.close()
     sys.exit()
-
