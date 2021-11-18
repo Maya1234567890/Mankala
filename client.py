@@ -6,6 +6,7 @@ import loginUI
 import boardUi
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+popup = []
 
 def server_recv(socket):
     while 1:
@@ -31,10 +32,14 @@ def start_game(name):
     tcpcliesock.send(json.dumps({"type": "Start Game"}).encode('utf-8'))
 
     # trying to open the board window, however failing :(
-    """win = QtWidgets.QMainWindow()
-    mancala_window = boardUi.Ui_Form()
-    mancala_window.setupUi(win)
-    win.show()"""
+    print(":P")
+    Form = QtWidgets.QWidget()
+    ui = boardUi.Ui_Form()
+    ui.setupUi(Form)
+    Form.show()
+    
+    global popup
+    popup.append(Form)
 
 
 def join_game(name, id):
