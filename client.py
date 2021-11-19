@@ -5,31 +5,58 @@ from threading import Thread
 import loginUI
 import boardUi
 from PyQt5 import QtCore, QtGui, QtWidgets
+import time
 
 popup = []
 
-def server_recv(socket):
-    while 1:
+
+def server_recv():
+    global tcpcliesock
+    while True:
         try:
-            #data = json.loads(socket.recv(BUFSIZ).decode()[5:])
-            data = socket.recv(BUFSIZ).decode('utf-8')
-            print(data)
+            msg = json.loads(tcpcliesock.recv(BUFSIZ).decode()[5:])
+            # msg = socket.recv(BUFSIZ).decode('utf-8')
+            print(msg)
         except OSError:
             exit()
 
 
+def board_window(id):
+    Form = QtWidgets.QWidget()
+    ui = boardUi.Ui_Form()
+    ui.setupUi(Form)
+    ui.label_2.setText('Game ID: ' + str(id))
+    Form.show()  # TODO command show doesn't work. Why?
+    global popup
+    popup.append(Form)
+
+    server_recv_thread = Thread(target=lambda: server_recv(), daemon=True)
+    server_recv_thread.start()
+
+
 def start_game(name):
+    global tcpcliesock
     if not name.isalnum():
         print("Enter a name, not a digit")
         return
     tcpcliesock.send(json.dumps({"type":"Login","name":name}).encode('utf-8'))
-    """data = json.loads(tcpcliesock.recv(BUFSIZ).decode()[5:])
-    print(data)
-    if data["type"] != "Error":
-        tcpcliesock.send(json.dumps({"type": "Start Game"}).encode('utf-8'))
-        data = json.loads(tcpcliesock.recv(BUFSIZ).decode()[5:])
-    print(data)"""
+    msg = json.loads(tcpcliesock.recv(BUFSIZ).decode()[5:])
+    print(msg)
+    if msg["type"] != 'Welcome':
+        print(msg)
+        return
     tcpcliesock.send(json.dumps({"type": "Start Game"}).encode('utf-8'))
+    msg = json.loads(tcpcliesock.recv(BUFSIZ).decode()[5:])
+    if msg['type'] != 'Login Successfull':
+        print(msg)
+        return
+    msg = json.loads(tcpcliesock.recv(BUFSIZ).decode()[5:])
+    if msg['type'] != 'Success':
+        print(msg)
+        return
+
+    game_id = msg['game_id']
+    board_window(game_id)
 
     # trying to open the board window, however failing :(
     print(":P")
@@ -37,24 +64,27 @@ def start_game(name):
     ui = boardUi.Ui_Form()
     ui.setupUi(Form)
     Form.show()
-    
+
     global popup
     popup.append(Form)
 
 
 def join_game(name, id):
+    global tcpcliesock
     if not name.isalnum() or not id.isdigit():
         print("Name can't be a digit and the game ID has to be a digit")
         return
     tcpcliesock.send(json.dumps({"type":"Login","name":name}).encode('utf-8'))
-    tcpcliesock.send(json.dumps({"type": "Join Game", "game_id": eval(id)}).encode('utf-8'))
 
-    """data = json.loads(tcpcliesock.recv(BUFSIZ).decode()[5:])
-    print(data)
-    if data["type"] != "Error":
-        tcpcliesock.send(json.dumps({"type": "Join Game", "game_id":eval(id)}).encode('utf-8'))
-        data = json.loads(tcpcliesock.recv(BUFSIZ).decode()[5:])
-    print(data)"""
+    msg = json.loads(tcpcliesock.recv(BUFSIZ).decode()[5:])
+    print(msg)
+    if msg["type"] != 'Welcome':
+        print(msg)
+        return
+    tcpcliesock.send(json.dumps({"type": "Join Game", "game_id":eval(id)}).encode('utf-8'))
+    msg = json.loads(tcpcliesock.recv(BUFSIZ).decode()[5:])
+    print(msg)
+    board_window(id)
 
 
 HOST = '79.179.102.188'
@@ -73,8 +103,6 @@ except TimeoutError:
     print("Time ran out. Please try again later")
 finally:
     tcpcliesock.settimeout(None)
-    server_recv_thread = Thread(target=lambda: server_recv(tcpcliesock), daemon=True)
-    server_recv_thread.start()
 
     window = QtWidgets.QMainWindow()
     login_window = loginUI.UI_login()
@@ -84,18 +112,7 @@ finally:
     login_window.start_game_btn.clicked.connect(lambda: start_game(login_window.name_entry.text()))
     login_window.join_game_btn.clicked.connect(lambda: join_game(login_window.name_entry.text(), login_window.game_id_entry.text()))
 
-
-    # data = {}
-    # while 1:
-    #     while 1:
-    #         key = input(">> ")
-    #         if key == "": break
-    #         value = input(">> ")
-    #         if value.isdigit(): value = eval(value)
-    #         data[key] = value
-    #     tcpcliesock.send(json.dumps(data).encode('utf-8'))
-
 while not app.exec_():
-    # tcpcliesock.send(json.dumps({"type": "logout"}).encode('utf-8'))
+    tcpcliesock.send(json.dumps({"type": "Logout"}).encode('utf-8'))
     tcpcliesock.close()
     sys.exit()
