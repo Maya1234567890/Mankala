@@ -116,3 +116,14 @@ while not app.exec_():
     tcpcliesock.send(json.dumps({"type": "Logout"}).encode('utf-8'))
     tcpcliesock.close()
     sys.exit()
+
+
+# get second turn
+# protect or attack
+# limit the number of your stones and if it gets to the maximum get rid of them
+# try to get an empty hole
+# check if the other player can eat your stones == check all possible outcomes
+# check if he can mess up your next turn if no go for it!
+# check if you can mess his turn if you can go for it!
+# try to get rid off of the greatest heap at the end of your board if they are equal get rid off the closest to you stones.
+# try to get rid off of the smallest heap at the start of your board
