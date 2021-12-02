@@ -42,7 +42,7 @@
     <string>Game ID : </string>
    </property>
   </widget>
-  <widget class="QLabel" name="label_3">
+  <widget class="QLabel" name="hole_4">
    <property name="geometry">
     <rect>
      <x>310</x>
@@ -55,7 +55,7 @@
     <string>4</string>
    </property>
   </widget>
-  <widget class="QLabel" name="label_4">
+  <widget class="QLabel" name="hole_5">
    <property name="geometry">
     <rect>
      <x>350</x>
@@ -68,7 +68,7 @@
     <string>4</string>
    </property>
   </widget>
-  <widget class="QLabel" name="label_5">
+  <widget class="QLabel" name="hole_6">
    <property name="geometry">
     <rect>
      <x>390</x>
@@ -81,7 +81,7 @@
     <string>4</string>
    </property>
   </widget>
-  <widget class="QLabel" name="label_6">
+  <widget class="QLabel" name="hole_7">
    <property name="geometry">
     <rect>
      <x>420</x>
@@ -94,7 +94,7 @@
     <string>0</string>
    </property>
   </widget>
-  <widget class="QLabel" name="label_7">
+  <widget class="QLabel" name="hole_8">
    <property name="geometry">
     <rect>
      <x>390</x>
@@ -107,7 +107,7 @@
     <string>4</string>
    </property>
   </widget>
-  <widget class="QLabel" name="label_8">
+  <widget class="QLabel" name="hole_9">
    <property name="geometry">
     <rect>
      <x>350</x>
@@ -120,7 +120,7 @@
     <string>4</string>
    </property>
   </widget>
-  <widget class="QLabel" name="label_9">
+  <widget class="QLabel" name="hole_10">
    <property name="geometry">
     <rect>
      <x>320</x>
@@ -133,7 +133,7 @@
     <string>4</string>
    </property>
   </widget>
-  <widget class="QLabel" name="label_10">
+  <widget class="QLabel" name="hole_1">
    <property name="geometry">
     <rect>
      <x>200</x>
@@ -146,7 +146,7 @@
     <string>4</string>
    </property>
   </widget>
-  <widget class="QLabel" name="label_11">
+  <widget class="QLabel" name="hole_2">
    <property name="geometry">
     <rect>
      <x>240</x>
@@ -159,7 +159,7 @@
     <string>4</string>
    </property>
   </widget>
-  <widget class="QLabel" name="label_12">
+  <widget class="QLabel" name="hole_3">
    <property name="geometry">
     <rect>
      <x>280</x>
@@ -172,7 +172,7 @@
     <string>4</string>
    </property>
   </widget>
-  <widget class="QLabel" name="label_13">
+  <widget class="QLabel" name="hole_11">
    <property name="geometry">
     <rect>
      <x>270</x>
@@ -185,7 +185,7 @@
     <string>4</string>
    </property>
   </widget>
-  <widget class="QLabel" name="label_14">
+  <widget class="QLabel" name="hole_12">
    <property name="geometry">
     <rect>
      <x>230</x>
@@ -198,7 +198,7 @@
     <string>4</string>
    </property>
   </widget>
-  <widget class="QLabel" name="label_15">
+  <widget class="QLabel" name="hole_13">
    <property name="geometry">
     <rect>
      <x>200</x>
@@ -211,7 +211,7 @@
     <string>4</string>
    </property>
   </widget>
-  <widget class="QLabel" name="label_16">
+  <widget class="QLabel" name="hole_0">
    <property name="geometry">
     <rect>
      <x>160</x>
@@ -222,6 +222,32 @@
    </property>
    <property name="text">
     <string>0</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="opponent_lbl">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>10</y>
+     <width>201</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Game Opponent : </string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="turn_lbl">
+   <property name="geometry">
+    <rect>
+     <x>370</x>
+     <y>10</y>
+     <width>201</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Your Turn:  </string>
    </property>
   </widget>
  </widget>
