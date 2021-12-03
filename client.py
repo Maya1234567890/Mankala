@@ -41,10 +41,10 @@ def strategy(board):
                     op_turn = op_turn + 14
                 print(op_turn)  # the place where the last stone fell on the list board
                 # the enemy has a chance to steal from me but i can defend
-                if 8 <= op_turn < 14 and board[op_turn] == 0 and (turn <= op_turn or turn <= j):
+                if 8 <= op_turn < 14 and (board[op_turn] == 0 or op_turn == j) and (turn <= op_turn or turn <= j):
                     move(i)
                     return
-                if op_turn == 7 and i <= j:
+                if op_turn == 7 and turn <= j:
                     move(i)
                     return
     # temp
@@ -79,7 +79,7 @@ def server_recv(ui):
     global server
     while True:
         try:
-            msg_len = eval(server.recv(5).decode().strip("0"))
+            msg_len = eval(server.recv(5).decode().lstrip("0"))
             # print(msg_len, 1)
             msg = server.recv(msg_len).decode('utf-8')
             # print(msg, 2)
