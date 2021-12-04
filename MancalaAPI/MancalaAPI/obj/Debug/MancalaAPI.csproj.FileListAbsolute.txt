@@ -12,3 +12,11 @@ C:\Users\user\source\repos\MancalaAPI\MancalaAPI\bin\Debug\MancalaAPI.exe.config
 C:\Users\user\source\repos\MancalaAPI\MancalaAPI\bin\Debug\MancalaAPI.exe
 C:\Users\user\source\repos\MancalaAPI\MancalaAPI\obj\Debug\MancalaAPI.csproj.SuggestedBindingRedirects.cache
 C:\Users\user\source\repos\MancalaAPI\MancalaAPI\obj\Debug\MancalaAPI.exe
+C:\Users\user\source\repos\MancalaAPI\MancalaAPI\bin\Debug\IronPython.dll
+C:\Users\user\source\repos\MancalaAPI\MancalaAPI\bin\Debug\IronPython.Modules.dll
+C:\Users\user\source\repos\MancalaAPI\MancalaAPI\bin\Debug\Microsoft.Scripting.dll
+C:\Users\user\source\repos\MancalaAPI\MancalaAPI\bin\Debug\System.Memory.dll
+C:\Users\user\source\repos\MancalaAPI\MancalaAPI\bin\Debug\Microsoft.Dynamic.dll
+C:\Users\user\source\repos\MancalaAPI\MancalaAPI\bin\Debug\System.Runtime.CompilerServices.Unsafe.dll
+C:\Users\user\source\repos\MancalaAPI\MancalaAPI\obj\Debug\MancalaAPI.csproj.CopyComplete
+C:\Users\user\source\repos\MancalaAPI\MancalaAPI\bin\Debug\script.py
