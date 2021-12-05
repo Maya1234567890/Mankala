@@ -19,4 +19,4 @@ C:\Users\user\source\repos\MancalaAPI\MancalaAPI\bin\Debug\System.Memory.dll
 C:\Users\user\source\repos\MancalaAPI\MancalaAPI\bin\Debug\Microsoft.Dynamic.dll
 C:\Users\user\source\repos\MancalaAPI\MancalaAPI\bin\Debug\System.Runtime.CompilerServices.Unsafe.dll
 C:\Users\user\source\repos\MancalaAPI\MancalaAPI\obj\Debug\MancalaAPI.csproj.CopyComplete
-C:\Users\user\source\repos\MancalaAPI\MancalaAPI\bin\Debug\script.py
+C:\Users\user\source\repos\MancalaAPI\MancalaAPI\obj\Debug\MancalaAPI.EndWindow.resources

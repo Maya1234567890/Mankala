@@ -8,8 +8,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-using IronPython.Hosting;
-
 namespace MancalaAPI
 {
     public partial class Board : Form
@@ -38,16 +36,6 @@ namespace MancalaAPI
                 holes[i].BackColor = Color.Transparent;
             }
 
-            var py = Python.CreateEngine();
-            try
-            {
-                py.ExecuteFile("script.py");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(
-                   "Oops! We couldn't execute the script because of an exception: " + ex.Message);
-            }
         }
 
     }
