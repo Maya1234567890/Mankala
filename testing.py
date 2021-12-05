@@ -1,4 +1,4 @@
-board = [0, 6, 3, 4, 0, 0, 3, 0, 8, 17, 0, 3, 2, 1]
+board = [0, 7, 3, 2, 0, 0, 0, 0, 8, 17, 6, 3, 2, 1]
 # boar= [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
 
 """def strategy(board):
@@ -99,7 +99,8 @@ def strategy(board):
         for j in strategy_board[8:14]:
             if j[1] == 0: continue
             # if the enemy has a chance to steal from me
-            if j[2] != 7 and (strategy_board[j[2]][1] == 0 or j[0] == j[2]) and strategy_board[14 - j[2]][1] != 0:
+            if j[2] != 7 and (strategy_board[j[2]][1] == 0 or j[1] == 13)\
+                    and strategy_board[14 - j[2]][0] != j[0] and (strategy_board[14 - j[2]][1] != 0 or j[1] == 13):# or (strategy_board[14 - j[2]][0] == j[0] and j[1] == 13)):
                 # if I can defend myself
                 if i[1] > i[0] and (i[2] <= j[2] or i[2] <= j[0]):
                     print(i[0])

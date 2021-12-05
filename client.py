@@ -5,7 +5,7 @@ from threading import Thread
 import loginUI
 import boardUi
 from PyQt5 import QtCore, QtGui, QtWidgets
-from random import randint
+#from random import randint
 import time
 
 popup = []
@@ -59,7 +59,9 @@ def strategy(board):
         for j in strategy_board[8:14]:
             if j[1] == 0: continue
             # if the enemy has a chance to steal from me
-            if j[2] != 7 and (strategy_board[j[2]][1] == 0 or j[0] == j[2]) and strategy_board[14 - j[2]][1] != 0:
+            if j[2] != 7 and (strategy_board[j[2]][1] == 0 or j[1] == 13) \
+                    and strategy_board[14 - j[2]][0] != j[0] and\
+                    (strategy_board[14 - j[2]][1] != 0 or j[1] == 13):
                 # if I can defend myself
                 if i[1] > i[0] and (i[2] <= j[2] or i[2] <= j[0]):
                     move(i[0])
@@ -129,6 +131,12 @@ def server_recv(ui):
             # print(msg, 2)
             data = json.loads(msg)
             print(data)
+            """# Get message length
+            msg_length = int(server.recv(5))
+
+            # Receive message
+            data = json.loads(server.recv(msg_length))
+            print(data)"""
 
             if data["type"] == "Board Update":
                 # make a function to change the ui accordingly
