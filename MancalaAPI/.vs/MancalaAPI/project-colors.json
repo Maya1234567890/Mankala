@@ -1,0 +1,21 @@
+{
+  "Version": 1,
+  "ProjectMap": {
+    "ecf0275f-1671-417d-acb9-bf1ffae88390": {
+      "ProjectGuid": "ecf0275f-1671-417d-acb9-bf1ffae88390",
+      "DisplayName": "MancalaAPI",
+      "ColorIndex": 0
+    },
+    "a2fe74e1-b743-11d0-ae1a-00a0c90fffc3": {
+      "ProjectGuid": "a2fe74e1-b743-11d0-ae1a-00a0c90fffc3",
+      "DisplayName": "Miscellaneous Files",
+      "ColorIndex": -1
+    },
+    "8556171e-44a1-47b5-b688-d3673b713c11": {
+      "ProjectGuid": "8556171e-44a1-47b5-b688-d3673b713c11",
+      "DisplayName": "Solution Items",
+      "ColorIndex": 1
+    }
+  },
+  "NextColorIndex": 2
+}
