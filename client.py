@@ -11,46 +11,88 @@ import time
 popup = []
 
 
-def strategy(board):
-    # if any turn can make you another turn
-    for i, hole in enumerate(board[0:7]):
-        if i == 0 or hole == 0: continue
-        turn = i - hole  # the place where the last stone fell
-        while turn < 0:
-            if turn < -6: turn = turn - 1
-            turn = turn + 14
-        print(turn)  # the place where the last stone fell on the list board
-        # another turn
-        if turn == 0:
-            move(i)
-            return
-        # a chance to steal
-        if 0 < turn < 7 and board[turn] == 0:
-            move(i)
-            return
-        # if I reach the enemy's side
-        if hole > i:
-            # checking the opponent's turns
-            for j, op_hole in enumerate(board[8:]):
-                if op_hole == 0: continue
-                j = j + 8
-                print(j, op_hole)
-                op_turn = j - op_hole  # the place of the last stone fell
-                while op_turn < 0:
-                    if op_turn < -6: op_turn = op_turn - 1
-                    op_turn = op_turn + 14
-                print(op_turn)  # the place where the last stone fell on the list board
-                # the enemy has a chance to steal from me but i can defend
-                if 8 <= op_turn < 14 and (board[op_turn] == 0 or op_turn == j) and (turn <= op_turn or turn <= j):
-                    move(i)
-                    return
-                if op_turn == 7 and turn <= j:
-                    move(i)
-                    return
-    # temp
-    move(randint(1, 6))
-    return
+def calculate_end_hole(i, hole):
+    """
+    :param i:
+    :param hole:
+    :return:
+    """
+    sum = i
+    for j in range(hole):
+        if (8 <= i <= 13 and sum == 1) or (1 <= i <= 6 and sum == 0):
+            sum = 13
+        elif 1 <= i <= 6 and sum == 8:
+            sum = 6
+        else:
+            sum = sum - 1
+    print("the last ball from pit", i, "will fall in hole number", sum)
+    return sum
 
+
+def strategy(board):
+    strategy_board = []
+
+    for i, hole in enumerate(board):
+        if i == 0 or i == 7:
+            strategy_board.append(None)
+            continue
+        end_pit = calculate_end_hole(i, hole)
+        strategy_board.append([i, hole, end_pit])
+    print(strategy_board)
+
+    """if I can have another turn
+    this has to be done separately"""
+    for i in strategy_board[1:7]:
+        if i[2] == 0:
+            move(i[0])
+            return
+
+    for i in strategy_board[1:7]:
+        if i[1] == 0: continue
+        # if I can move the balls in the pit and the if there are balls in the pit
+        if i[2] != 0 and i[2] != 7:
+            # if I can steal and if it's worth to steal
+            if strategy_board[i[2]][1] == 0 and strategy_board[14 - i[2]][1] != 0:
+                move(i[0])
+                return
+
+        for j in strategy_board[8:14]:
+            if j[1] == 0: continue
+            # if the enemy has a chance to steal from me
+            if j[2] != 7 and (strategy_board[j[2]][1] == 0 or j[0] == j[2]) and strategy_board[14 - j[2]][1] != 0:
+                # if I can defend myself
+                if i[1] > i[0] and (i[2] <= j[2] or i[2] <= j[0]):
+                    move(i[0])
+                    return
+
+            # if the enemy has a chance for a second turn and I can ruin it
+            if i[1] > i[0] and j[2] == 7 and i[2] <= j[0]:
+                move(i[0])
+                return
+
+    max = strategy_board[4][1]
+    j = 4
+    for i in range(4, 7):
+        if strategy_board[i][1] > max:
+            max = strategy_board[i][1]
+            j = i
+    if max != 0:
+        move(j)
+        return
+
+    min = strategy_board[1][1]
+    j = 1
+    for i in range(1, 4):
+        if min == 0 or (strategy_board[i][1] != 0 and strategy_board[i][1] < min):
+            min = strategy_board[i][1]
+            j = i
+    if min != 0:
+        move(j)
+        return
+    # temp
+"""    move(randint(1, 6))
+    print("random")
+    return"""
 
     # print(board)
 
@@ -67,13 +109,15 @@ def move(index):
             "index": index
         }).encode('utf-8')
     )
-    # temp
-    time.sleep(2)
+
 
 def update_board(board, ui):
     holes = ui.get_all_holes()
     for i, hole in enumerate(holes):
         hole.setText(str(board[i]))
+        # temp
+        #time.sleep(0.5)
+
 
 def server_recv(ui):
     global server
@@ -198,11 +242,11 @@ while not app.exec_():
     sys.exit()
 
 # get second turn ✓
-# protect or attack
-# limit the number of your stones and if it gets to the maximum get rid of them
+# protect or attack ✓/
+# limit the number of your stones and if it gets to the maximum get rid of them ✓
 # try to get an empty hole ✓
 # check if the other player can eat your stones ✓ => check all possible outcomes /
 # check if he can mess up your next turn if no go for it! ✓
 # check if you can mess his turn if you can go for it! ✓
-# try to get rid off of the greatest heap at the end of your board if they are equal get rid off the closest to you stones.
-# try to get rid off of the smallest heap at the start of your board
+# try to get rid off of the greatest heap at the end of your board if they are equal get rid off the closest to you stones. ✓
+# try to get rid off of the smallest heap at the start of your board ✓
