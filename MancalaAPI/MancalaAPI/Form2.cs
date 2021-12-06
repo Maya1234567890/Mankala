@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Net.Sockets;
 
 namespace MancalaAPI
 {
@@ -26,9 +27,19 @@ namespace MancalaAPI
 
         private void button1_Click(object sender, EventArgs e)
         {
+            string name = textBox1.Text;
+            string msg = String.Format("[\'start\', \'{0}\']", name);
+            Program.s.Send(Encoding.ASCII.GetBytes(msg));
             Board openForm = new Board();
             openForm.Show();
             Visible = false;
+     
+            
+        }
+
+        private void pictureBox2_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

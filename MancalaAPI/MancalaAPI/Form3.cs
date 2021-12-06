@@ -8,6 +8,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
+using System.Net.Sockets;
+
 namespace MancalaAPI
 {
     public partial class JoinGame : Form
@@ -24,6 +26,7 @@ namespace MancalaAPI
 
             pictureBox2.Parent = pictureBox1;
             pictureBox2.BackColor = Color.Transparent;
+
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -31,6 +34,10 @@ namespace MancalaAPI
             Board openForm = new Board();
             openForm.Show();
             Visible = false;
+            string name = textBox1.Text, id = textBox2.Text;
+            string msg = String.Format("[\'start\', \'{0}\', \'{1}\']'", name,id);
+            Program.s.Send(Encoding.ASCII.GetBytes(msg));
+
         }
     }
 }

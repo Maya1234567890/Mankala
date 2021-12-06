@@ -2,9 +2,9 @@ from socket import *
 import sys
 import json
 from threading import Thread
-import loginUI
-import boardUi
-from PyQt5 import QtCore, QtGui, QtWidgets
+# import loginUI
+# import boardUi
+#from PyQt5 import QtCore, QtGui, QtWidgets
 #from random import randint
 import time
 
@@ -118,12 +118,25 @@ def update_board(board, ui):
     for i, hole in enumerate(holes):
         hole.setText(str(board[i]))
         # temp
+        client.send("Board".encode('utf-8'))
         #time.sleep(0.5)
 
+def thread_recv_API():
+    msg = server.recv(1024).decode('utf-8')
+    if msg == '[\'stop\']':
+        # send to server quit
+        exit()
 
-def server_recv(ui):
+def server_recv():
     global server
+    # temp
+    client.send("Board".encode('utf-8'))
+
+    server_recv_thread = Thread(target=lambda: thread_recv_API(), daemon=True)
+    server_recv_thread.start()
+
     while True:
+
         try:
             msg_len = eval(server.recv(5).decode().lstrip("0"))
             # print(msg_len, 1)
@@ -140,14 +153,17 @@ def server_recv(ui):
 
             if data["type"] == "Board Update":
                 # make a function to change the ui accordingly
-                update_board(data['board'], ui)
-                ui.turn_lbl.setText("Your Turn: " + str(data["your turn"]))
-                if data["your turn"]: strategy(data['board'])
+                update_board(data['board'])
+                # ui.turn_lbl.setText("Your Turn: " + str(data["your turn"]))
+                if data["your turn"]:
+                    strategy(data['board'])
 
             elif data["type"] == "Notification":
-                ui.opponent_lbl.setText("Game Opponent: " + data["data"][0:data["data"].index(" ")])
+                print(data)
+                # ui.opponent_lbl.setText("Game Opponent: " find(" "):])+ data["data"][0:data["data"].index(" ")])
             elif data["type"] == "Success":
-                ui.opponent_lbl.setText("Game Opponent: " + data["data"][data["data"].rfind(" "):])
+                print(data)
+                # ui.opponent_lbl.setText("Game Opponent: " + data["data"][data["data"].r
 
                 # If we got an error
             elif data["type"] == "Error":
@@ -168,16 +184,16 @@ def server_recv(ui):
 
 
 def board_window(id):
-    Form = QtWidgets.QWidget()
+    """Form = QtWidgets.QWidget()
     ui = boardUi.Ui_Form()
     ui.setupUi(Form)
     ui.label_2.setText('Game ID: ' + str(id))
     Form.show()
     global popup
-    popup.append(Form)
-
-    server_recv_thread = Thread(target=lambda x=ui: server_recv(x), daemon=True)
-    server_recv_thread.start()
+    popup.append(Form)"""
+    server_recv()
+    """server_recv_thread = Thread(target=lambda x=ui: server_recv(x), daemon=True)
+    server_recv_thread.start()"""
 
 
 def start_game(name):
@@ -217,6 +233,30 @@ def join_game(name, id):
     print(msg, "!!!")"""
     board_window(id)
 
+def wait_for_API(client):
+    data = client.recv(1024).decode('utf-8')
+    try:
+        data = eval(data)
+        print(data)
+        if data[0] == 'start':
+            start_game(data[1])
+        else:
+            join_game(data[1], data[2])
+    except Exception as e:
+        print(e)
+        print(data)
+        #if
+
+def connect_to_API():
+    HOST = ""
+    PORT = 45_000
+    SERVER = socket(AF_INET, SOCK_STREAM)
+    ADDR = (HOST, PORT)
+    SERVER.bind(ADDR)
+    SERVER.listen(5)
+    print("Waiting for connection...")
+    client, client_address = SERVER.accept()
+    return client, client_address
 
 HOST = '109.66.6.106'
 PORT = 45000
@@ -224,32 +264,22 @@ BUFSIZ = 1024
 ADDR = (HOST, PORT)
 server = socket(AF_INET, SOCK_STREAM)
 server.settimeout(5)
-app = QtWidgets.QApplication(sys.argv)
+
+# app = QtWidgets.QApplication(sys.argv)
 
 try:  # try to connect to the server's socket.
     server.connect(ADDR)
 except ConnectionRefusedError:
     print("The server is closed")
-except TimeoutError:
+except timeout:
     print("Time ran out. Please try again later")
 finally:
     server.settimeout(None)
     msg = json.loads(server.recv(BUFSIZ).decode()[5:])
     print(msg)
-
-    window = QtWidgets.QMainWindow()
-    login_window = loginUI.UI_login()
-    login_window.setupUi(window)
-    window.show()
-
-    login_window.start_game_btn.clicked.connect(lambda: start_game(login_window.name_entry.text()))
-    login_window.join_game_btn.clicked.connect(
-        lambda: join_game(login_window.name_entry.text(), login_window.game_id_entry.text()))
-
-while not app.exec_():
-    server.send(json.dumps({"type": "Logout"}).encode('utf-8'))
-    server.close()
-    sys.exit()
+    client, client_address = connect_to_API()
+    print(client_address)
+    wait_for_API(client)
 
 # get second turn ✓
 # protect or attack ✓/

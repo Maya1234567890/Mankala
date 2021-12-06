@@ -12,8 +12,10 @@ using System.Net.Sockets;
 
 namespace MancalaAPI
 {
+    
     public partial class MainMenu : Form
     {
+        //public static Socket s;
         public MainMenu()
         {
             InitializeComponent();
@@ -24,8 +26,9 @@ namespace MancalaAPI
             label2.Parent = pictureBox1;
             label2.BackColor = Color.Transparent;
 
-            Socket s = new Socket(AddressFamily.InterNetwork,
+            Program.s = new Socket(AddressFamily.InterNetwork,
                 SocketType.Stream, ProtocolType.Tcp);
+            Program.s.Connect("localhost", 45000);
 
         }
 

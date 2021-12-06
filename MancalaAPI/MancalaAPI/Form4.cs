@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Net.Sockets;
 
 namespace MancalaAPI
 {
@@ -35,6 +36,12 @@ namespace MancalaAPI
                 holes[i].Parent = pictureBox2;
                 holes[i].BackColor = Color.Transparent;
             }
+
+            byte[] buffer = new byte[1024];
+            int len = Program.s.Receive(buffer);
+            string data = Encoding.UTF8.GetString(buffer, 0, buffer.Length);
+            Console.WriteLine(data);
+            //while ()
 
         }
 
