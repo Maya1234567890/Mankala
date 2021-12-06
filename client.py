@@ -160,6 +160,8 @@ def server_recv(ui):
                     strategy(data['board'])
                 # Game over message (includes log)
             elif data["type"] == "Game Over":
+                if data["won"]:
+                    print("WON!")
                 print(data)
         except OSError:
             exit()

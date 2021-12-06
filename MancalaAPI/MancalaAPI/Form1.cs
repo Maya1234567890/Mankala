@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Net.Sockets;
 
 
 namespace MancalaAPI
@@ -22,6 +23,9 @@ namespace MancalaAPI
 
             label2.Parent = pictureBox1;
             label2.BackColor = Color.Transparent;
+
+            Socket s = new Socket(AddressFamily.InterNetwork,
+                SocketType.Stream, ProtocolType.Tcp);
 
         }
 
