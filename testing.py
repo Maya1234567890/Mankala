@@ -12,21 +12,21 @@ board = [0, 7, 3, 2, 0, 0, 0, 0, 8, 17, 6, 3, 2, 1]
             turn = turn + 14
         print("sof tor",turn)
         if turn == 0:
-            print("hole",i)
+            print("pit {0} make you another move".format(pit))
             return
-        if 0<turn<7 and board[turn] == 0:
-            print("hole",i)
+        # if any turn can make you take opponent's stones
+        if 0<turn<7 and (board[turn] == 0 or turn == pit) and board[14-turn] != 0:
+            print("pit {0} make you take opponent's stones from pit {1}".format(pit, 14-turn))
             return
 
         #ליריב יש הזדמנות לגנוב ממני כדורים
-        for j, op_hole in enumerate(board[8:]):
-            if op_hole == 0: continue
-            j = j + 8
-            print(j, op_hole)
-            op_turn = j - op_hole  # te place of the last stone fell
-            while op_turn < 0:
-                if op_turn < -6: op_turn = op_turn - 1
-                op_turn = op_turn+14
+        # do we really need to check it every turn?...
+        for op_pit, op_stones in enumerate(board[8:]):
+            if op_stones == 0: continue
+            turn = make_move(op_pit, op_stones)
+            op_pit = op_pit + 8
+            print(op_pit, op_stones)
+            op_turn = turn+8 if 0<=turn<7 else turn-6
             print("sof tor yariv", op_turn)
 
             if op_turn == 0:
