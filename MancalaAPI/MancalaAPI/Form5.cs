@@ -18,6 +18,9 @@ namespace MancalaAPI
 
             label1.Parent = pictureBox1;
             label1.BackColor = Color.Transparent;
+
+            if (Program.data == "True") label1.Text = "You Won!";
+            else label1.Text = "You Lost!";
         }
     }
 }
