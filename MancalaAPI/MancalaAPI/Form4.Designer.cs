@@ -32,8 +32,6 @@
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
             this.label2 = new System.Windows.Forms.Label();
-            this.label1 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
             this.hole_0 = new System.Windows.Forms.Label();
             this.hole_7 = new System.Windows.Forms.Label();
             this.hole_1 = new System.Windows.Forms.Label();
@@ -48,6 +46,7 @@
             this.hole_10 = new System.Windows.Forms.Label();
             this.hole_9 = new System.Windows.Forms.Label();
             this.hole_8 = new System.Windows.Forms.Label();
+            this.button1 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             this.SuspendLayout();
@@ -80,38 +79,12 @@
             this.label2.BackColor = System.Drawing.SystemColors.GrayText;
             this.label2.Font = new System.Drawing.Font("Snap ITC", 16F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label2.ForeColor = System.Drawing.Color.Cornsilk;
-            this.label2.Location = new System.Drawing.Point(312, 111);
+            this.label2.Location = new System.Drawing.Point(299, 39);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(190, 42);
             this.label2.TabIndex = 10;
             this.label2.Text = "Game ID:";
             this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.BackColor = System.Drawing.SystemColors.GrayText;
-            this.label1.Font = new System.Drawing.Font("Snap ITC", 16F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.ForeColor = System.Drawing.Color.Cornsilk;
-            this.label1.Location = new System.Drawing.Point(29, 33);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(207, 42);
-            this.label1.TabIndex = 11;
-            this.label1.Text = "Opponent:";
-            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.BackColor = System.Drawing.SystemColors.GrayText;
-            this.label3.Font = new System.Drawing.Font("Snap ITC", 16F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.ForeColor = System.Drawing.Color.Cornsilk;
-            this.label3.Location = new System.Drawing.Point(503, 33);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(228, 42);
-            this.label3.TabIndex = 12;
-            this.label3.Text = "Your Turn:";
-            this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // hole_0
             // 
@@ -281,11 +254,27 @@
             this.hole_8.Text = "4";
             this.hole_8.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
+            // button1
+            // 
+            this.button1.BackColor = System.Drawing.Color.Cornsilk;
+            this.button1.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.button1.Font = new System.Drawing.Font("Snap ITC", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(64)))), ((int)(((byte)(0)))));
+            this.button1.Location = new System.Drawing.Point(600, 468);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(251, 42);
+            this.button1.TabIndex = 27;
+            this.button1.Text = "Start Show";
+            this.button1.UseVisualStyleBackColor = false;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
             // Board
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(863, 514);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.hole_8);
             this.Controls.Add(this.hole_9);
             this.Controls.Add(this.hole_10);
@@ -296,8 +285,6 @@
             this.Controls.Add(this.hole_5);
             this.Controls.Add(this.hole_4);
             this.Controls.Add(this.hole_3);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.hole_1);
             this.Controls.Add(this.hole_2);
@@ -308,7 +295,6 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Board";
             this.Text = "Mancala";
-            //this.Load += new System.EventHandler(this.Board_Load);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
             this.ResumeLayout(false);
@@ -321,8 +307,6 @@
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.PictureBox pictureBox2;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label hole_0;
         private System.Windows.Forms.Label hole_7;
         private System.Windows.Forms.Label hole_1;
@@ -337,5 +321,6 @@
         private System.Windows.Forms.Label hole_10;
         private System.Windows.Forms.Label hole_9;
         private System.Windows.Forms.Label hole_8;
+        private System.Windows.Forms.Button button1;
     }
 }

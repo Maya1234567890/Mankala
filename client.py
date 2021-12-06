@@ -1,14 +1,11 @@
 from socket import *
-import sys
+import os
 import json
 from threading import Thread
-# import loginUI
-# import boardUi
-#from PyQt5 import QtCore, QtGui, QtWidgets
-#from random import randint
-import time
 
-popup = []
+board_moves = []
+server = None
+client = None
 
 
 def calculate_end_hole(i, hole):
@@ -60,7 +57,7 @@ def strategy(board):
             if j[1] == 0: continue
             # if the enemy has a chance to steal from me
             if j[2] != 7 and (strategy_board[j[2]][1] == 0 or j[1] == 13) \
-                    and strategy_board[14 - j[2]][0] != j[0] and\
+                    and strategy_board[14 - j[2]][0] != j[0] and \
                     (strategy_board[14 - j[2]][1] != 0 or j[1] == 13):
                 # if I can defend myself
                 if i[1] > i[0] and (i[2] <= j[2] or i[2] <= j[0]):
@@ -92,11 +89,14 @@ def strategy(board):
         move(j)
         return
     # temp
+
+
 """    move(randint(1, 6))
     print("random")
     return"""
 
-    # print(board)
+
+# print(board)
 
 
 def move(index):
@@ -113,159 +113,166 @@ def move(index):
     )
 
 
-def update_board(board, ui):
-    holes = ui.get_all_holes()
-    for i, hole in enumerate(holes):
-        hole.setText(str(board[i]))
-        # temp
-        client.send("Board".encode('utf-8'))
-        #time.sleep(0.5)
-
 def thread_recv_API():
-    msg = server.recv(1024).decode('utf-8')
-    if msg == '[\'stop\']':
-        # send to server quit
-        exit()
+    """
+
+    """
+    global client
+
+    while 1:
+        try:
+            msg = eval(client.recv(BUFSIZ).decode('utf-8'))
+            print(msg)
+            if msg[0] == 'stop':
+                print("The GUI client stopped running. Exiting...")
+                # send to server quit
+                os._exit(1)
+            elif msg[0] == "Board request":
+                if not board_moves or type(board_moves[-1]) != bool:
+                    client.send("wait".encode('utf-8'))
+                else:
+                    client.send("->".join([str(j) for j in board_moves]).encode('utf-8'))
+        except SyntaxError:
+            exit()
+
 
 def server_recv():
-    global server
-    # temp
-    client.send("Board".encode('utf-8'))
+    global server, board_moves
 
-    server_recv_thread = Thread(target=lambda: thread_recv_API(), daemon=True)
-    server_recv_thread.start()
-
+    GUI_client_talk_thread = Thread(target=lambda: thread_recv_API(), daemon=True)
+    GUI_client_talk_thread.start()
     while True:
-
         try:
             msg_len = eval(server.recv(5).decode().lstrip("0"))
-            # print(msg_len, 1)
             msg = server.recv(msg_len).decode('utf-8')
-            # print(msg, 2)
-            data = json.loads(msg)
+            try:
+                data = json.loads(msg)
+            except:  # an error in the server
+                data = {"type": "nothing"}
+                board_moves.append(True)
             print(data)
-            """# Get message length
-            msg_length = int(server.recv(5))
-
-            # Receive message
-            data = json.loads(server.recv(msg_length))
-            print(data)"""
 
             if data["type"] == "Board Update":
-                # make a function to change the ui accordingly
-                update_board(data['board'])
+                board_moves.append(" ".join([str(j) for j in data['board']]))
                 # ui.turn_lbl.setText("Your Turn: " + str(data["your turn"]))
                 if data["your turn"]:
                     strategy(data['board'])
 
-            elif data["type"] == "Notification":
-                print(data)
-                # ui.opponent_lbl.setText("Game Opponent: " find(" "):])+ data["data"][0:data["data"].index(" ")])
-            elif data["type"] == "Success":
-                print(data)
-                # ui.opponent_lbl.setText("Game Opponent: " + data["data"][data["data"].r
-
-                # If we got an error
-            elif data["type"] == "Error":
-                print(data)
-
-                """if data["errtype"] == "Invalid Name":
-                    print(data)"""
-
-                if data["errtype"] == "Invalid Move":
-                    strategy(data['board'])
-                # Game over message (includes log)
             elif data["type"] == "Game Over":
-                if data["won"]:
-                    print("WON!")
-                print(data)
+                board_moves.append(data['won'])
+
         except OSError:
             exit()
+        except (NameError, SyntaxError, TypeError):  # errors in the server
+            continue
 
 
 def board_window(id):
-    """Form = QtWidgets.QWidget()
-    ui = boardUi.Ui_Form()
-    ui.setupUi(Form)
-    ui.label_2.setText('Game ID: ' + str(id))
-    Form.show()
-    global popup
-    popup.append(Form)"""
+    client.send("OK".encode('utf-8'))
+    print(client.recv(1024).decode('utf-8'))
+    client.send(("Game ID: " + str(id)).encode('utf-8'))
     server_recv()
     """server_recv_thread = Thread(target=lambda x=ui: server_recv(x), daemon=True)
     server_recv_thread.start()"""
 
 
 def start_game(name):
+    """
+
+    """
     global server
 
     if not name.isalnum():
-        print("Enter a name, not a digit")
-        return
+        client.send("Enter a name, not a digit".encode('utf-8'))
+        return -1
+
     server.send(json.dumps({"type": "Login", "name": name}).encode('utf-8'))
     msg = json.loads(server.recv(BUFSIZ).decode()[5:])
     print(msg)
-    if msg["type"] != 'Login Successfull': return
+    if msg["type"] != 'Login Successfull':
+        client.send(msg['data'].encode('utf-8'))
+        return -1
 
     server.send(json.dumps({"type": "Start Game"}).encode('utf-8'))
     msg = json.loads(server.recv(BUFSIZ).decode()[5:])
     print(msg)
-    if msg['type'] != 'Success': return
+    if msg['type'] != 'Success':
+        client.send(msg['data'].encode('utf-8'))
+        return -1
 
     game_id = msg['game_id']
     board_window(game_id)
+    return 0
 
 
 def join_game(name, id):
+    """
+
+    """
     global server
 
     if not name.isalnum() or not id.isdigit():
-        print("Name can't be a digit and the game ID has to be a digit")
-        return
+        client.send("Name can't be a digit and the game ID has to be a digit".encode('utf-8'))
+        return -1
 
     server.send(json.dumps({"type": "Login", "name": name}).encode('utf-8'))
     msg = json.loads(server.recv(BUFSIZ).decode()[5:])
     print(msg)
-    if msg["type"] != 'Login Successfull': return
+    if msg["type"] != 'Login Successfull':
+        client.send(msg['data'].encode('utf-8'))
+        return -1
 
     server.send(json.dumps({"type": "Join Game", "game_id": eval(id)}).encode('utf-8'))
     """msg = json.loads(server.recv(BUFSIZ).decode()[5:])
     print(msg, "!!!")"""
     board_window(id)
+    return 0
 
-def wait_for_API(client):
-    data = client.recv(1024).decode('utf-8')
+
+def wait_for_API():
+    """
+
+    """
     try:
-        data = eval(data)
-        print(data)
-        if data[0] == 'start':
-            start_game(data[1])
-        else:
-            join_game(data[1], data[2])
-    except Exception as e:
-        print(e)
-        print(data)
-        #if
+        while 1:
+            data = client.recv(1024).decode('utf-8')  # waiting for commands
+            data = eval(data)  # the data arrives as a list form
+            print("The GUI client sent:", data)
+            if data[0] == 'start':
+                n = start_game(data[1])
+                if n != -1: break
+            elif data[0] == 'join':
+                n = join_game(data[1], data[2])
+                if n != -1: break
+    except OSError:
+        # make an exit func
+        exit()
+
 
 def connect_to_API():
-    HOST = ""
+    """
+
+    """
+    # becoming a server
+    HOST = "localhost"
     PORT = 45_000
     SERVER = socket(AF_INET, SOCK_STREAM)
     ADDR = (HOST, PORT)
     SERVER.bind(ADDR)
+    # waiting for the winform
     SERVER.listen(5)
     print("Waiting for connection...")
     client, client_address = SERVER.accept()
     return client, client_address
 
+
+# server details
 HOST = '109.66.6.106'
 PORT = 45000
 BUFSIZ = 1024
 ADDR = (HOST, PORT)
 server = socket(AF_INET, SOCK_STREAM)
 server.settimeout(5)
-
-# app = QtWidgets.QApplication(sys.argv)
 
 try:  # try to connect to the server's socket.
     server.connect(ADDR)
@@ -275,18 +282,8 @@ except timeout:
     print("Time ran out. Please try again later")
 finally:
     server.settimeout(None)
-    msg = json.loads(server.recv(BUFSIZ).decode()[5:])
+    msg = json.loads(server.recv(BUFSIZ).decode()[5:])  # get welcome message
     print(msg)
-    client, client_address = connect_to_API()
-    print(client_address)
-    wait_for_API(client)
 
-# get second turn ✓
-# protect or attack ✓/
-# limit the number of your stones and if it gets to the maximum get rid of them ✓
-# try to get an empty hole ✓
-# check if the other player can eat your stones ✓ => check all possible outcomes /
-# check if he can mess up your next turn if no go for it! ✓
-# check if you can mess his turn if you can go for it! ✓
-# try to get rid off of the greatest heap at the end of your board if they are equal get rid off the closest to you stones. ✓
-# try to get rid off of the smallest heap at the start of your board ✓
+    client, client_address = connect_to_API()  # connect to the winform
+    wait_for_API()  # wait for commands from the user

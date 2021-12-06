@@ -19,7 +19,8 @@ namespace MancalaAPI
 
             label1.Parent = pictureBox1;
             label1.BackColor = Color.Transparent;
-
+            label2.Parent = pictureBox1;
+            label2.BackColor = Color.Transparent;
             pictureBox2.Parent = pictureBox1;
             pictureBox2.BackColor = Color.Transparent;
 
@@ -30,16 +31,20 @@ namespace MancalaAPI
             string name = textBox1.Text;
             string msg = String.Format("[\'start\', \'{0}\']", name);
             Program.s.Send(Encoding.ASCII.GetBytes(msg));
+            
+            string ans = Program.ReceiveMessage();
+            if (ans != "OK")
+            {
+                label2.Text = ans;
+                return;
+            }
+
             Board openForm = new Board();
             openForm.Show();
             Visible = false;
-     
-            
+
+            //openForm.BeginBoard();
         }
 
-        private void pictureBox2_Click(object sender, EventArgs e)
-        {
-
-        }
     }
 }
