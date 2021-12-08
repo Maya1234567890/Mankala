@@ -139,8 +139,8 @@ def thread_recv_API():
 def server_recv():
     global server, board_moves
 
-    GUI_client_talk_thread = Thread(target=lambda: thread_recv_API(), daemon=True)
-    GUI_client_talk_thread.start()
+    #GUI_client_talk_thread = Thread(target=lambda: thread_recv_API(), daemon=True)
+    #GUI_client_talk_thread.start()
     while True:
         try:
             msg_len = eval(server.recv(5).decode().lstrip("0"))
@@ -159,7 +159,8 @@ def server_recv():
                     strategy(data['board'])
 
             elif data["type"] == "Game Over":
-                board_moves.append(data['won'])
+                print("j")
+                #board_moves.append(data['won'])
 
         except OSError:
             exit()
@@ -168,9 +169,9 @@ def server_recv():
 
 
 def board_window(id):
-    client.send("OK".encode('utf-8'))
-    print(client.recv(1024).decode('utf-8'))
-    client.send(("Game ID: " + str(id)).encode('utf-8'))
+    #client.send("OK".encode('utf-8'))
+    #print(client.recv(1024).decode('utf-8'))
+    #client.send(("Game ID: " + str(id)).encode('utf-8'))
     server_recv()
     """server_recv_thread = Thread(target=lambda x=ui: server_recv(x), daemon=True)
     server_recv_thread.start()"""
@@ -182,10 +183,6 @@ def start_game(name):
     """
     global server
 
-    if not name.isalnum():
-        client.send("Enter a name, not a digit".encode('utf-8'))
-        return -1
-
     server.send(json.dumps({"type": "Login", "name": name}).encode('utf-8'))
     msg = json.loads(server.recv(BUFSIZ).decode()[5:])
     print(msg)
@@ -193,14 +190,9 @@ def start_game(name):
         client.send(msg['data'].encode('utf-8'))
         return -1
 
-    server.send(json.dumps({"type": "Start Game"}).encode('utf-8'))
-    msg = json.loads(server.recv(BUFSIZ).decode()[5:])
-    print(msg)
-    if msg['type'] != 'Success':
-        client.send(msg['data'].encode('utf-8'))
-        return -1
+    #server.send(json.dumps({"type": "Start Game"}).encode('utf-8'))
 
-    game_id = msg['game_id']
+    game_id = 0
     board_window(game_id)
     return 0
 
@@ -285,5 +277,6 @@ finally:
     msg = json.loads(server.recv(BUFSIZ).decode()[5:])  # get welcome message
     print(msg)
 
-    client, client_address = connect_to_API()  # connect to the winform
-    wait_for_API()  # wait for commands from the user
+    #client, client_address = connect_to_API()  # connect to the winform
+    #wait_for_API()  # wait for commands from the user
+    start_game("M&M")
