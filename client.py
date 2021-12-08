@@ -148,7 +148,7 @@ def server_recv():
             try:
                 data = json.loads(msg)
             except:  # an error in the server
-                data = {"type": "nothing"}
+                data = "server down"
                 board_moves.append(True)
             print(data)
 
@@ -182,9 +182,9 @@ def start_game(name):
     """
     global server
 
-    if not name.isalnum():
-        client.send("Enter a name, not a digit".encode('utf-8'))
-        return -1
+    # if not name.isalnum():
+    #     client.send("Enter a name, not a digit".encode('utf-8'))
+    #     return -1
 
     server.send(json.dumps({"type": "Login", "name": name}).encode('utf-8'))
     msg = json.loads(server.recv(BUFSIZ).decode()[5:])
@@ -193,14 +193,14 @@ def start_game(name):
         client.send(msg['data'].encode('utf-8'))
         return -1
 
-    server.send(json.dumps({"type": "Start Game"}).encode('utf-8'))
-    msg = json.loads(server.recv(BUFSIZ).decode()[5:])
-    print(msg)
-    if msg['type'] != 'Success':
-        client.send(msg['data'].encode('utf-8'))
-        return -1
+    # server.send(json.dumps({"type": "Start Game"}).encode('utf-8'))
+    # msg = json.loads(server.recv(BUFSIZ).decode()[5:])
+    # print(msg)
+    # if msg['type'] != 'Success':
+    #     client.send(msg['data'].encode('utf-8'))
+    #     return -1
 
-    game_id = msg['game_id']
+    game_id = 0  # msg['game_id']
     board_window(game_id)
     return 0
 
@@ -251,11 +251,11 @@ def wait_for_API():
 
 def connect_to_API():
     """
-
+    connecting to the GUI on C#
     """
     # becoming a server
-    HOST = "localhost"
-    PORT = 45_000
+    HOST = "127.0.0.1"
+    PORT = 45000
     SERVER = socket(AF_INET, SOCK_STREAM)
     ADDR = (HOST, PORT)
     SERVER.bind(ADDR)

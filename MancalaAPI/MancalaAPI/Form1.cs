@@ -26,10 +26,8 @@ namespace MancalaAPI
             label2.Parent = pictureBox1;
             label2.BackColor = Color.Transparent;
 
-            Program.s = new Socket(AddressFamily.InterNetwork,
-                SocketType.Stream, ProtocolType.Tcp);
-            Program.s.Connect("localhost", 45000);
-
+            Program.s = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            Program.s.Connect("127.0.0.1", 45000);
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -44,6 +42,11 @@ namespace MancalaAPI
             JoinGame openForm = new JoinGame();
             openForm.Show();
             Visible = false;
+        }
+
+        private void pictureBox1_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

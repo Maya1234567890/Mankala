@@ -46,5 +46,9 @@ namespace MancalaAPI
             //openForm.BeginBoard();
         }
 
+        private void pictureBox2_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }
