@@ -1,18 +1,15 @@
 from socket import *
-import os
 import json
-from threading import Thread
+import time
 
-board_moves = []
+# global vars
 server = None
 client = None
 
 
 def calculate_end_hole(i, hole):
     """
-    :param i:
-    :param hole:
-    :return:
+
     """
     sum = i
     for j in range(hole):
@@ -27,48 +24,67 @@ def calculate_end_hole(i, hole):
 
 
 def strategy(board):
-    strategy_board = []
+    """
+
+    """
+
+    strategy_board = []  # for each slot: [slot number, amount of balls in the slot, the ending slot for the game move]
+    # (we know, we should have made this a dictionary)
 
     for i, hole in enumerate(board):
+        # if the slot is the sum slot
         if i == 0 or i == 7:
             strategy_board.append(None)
             continue
-        end_pit = calculate_end_hole(i, hole)
-        strategy_board.append([i, hole, end_pit])
+        end_pit = calculate_end_hole(i, hole)  # where the last ball from the pit ends at
+        strategy_board.append([i, hole, end_pit])  # save the information
     print(strategy_board)
 
-    """if I can have another turn
-    this has to be done separately"""
+    # if I can have another turn. this has to be done separately!
+    for i in strategy_board[1:7]:  # for all the balls on the user's side
+        if i[2] == 0:  # if the ball ends in the sum pit
+            move(i[0])  # make a move
+            return
+
+    # seeing if the user can steal balls to his side
     for i in strategy_board[1:7]:
-        if i[2] == 0:
+        if i[1] == 0: continue  # if there are no balls in the pit
+        if strategy_board[i[2]][1] == 0 and strategy_board[14 - i[2]][1] != 0:
+            """if the end pit for the user is empty
+            if the opposite pit from the user's end pit is not empty"""
             move(i[0])
             return
 
-    for i in strategy_board[1:7]:
-        if i[1] == 0: continue
-        # if I can move the balls in the pit and the if there are balls in the pit
-        if i[2] != 0 and i[2] != 7:
-            # if I can steal and if it's worth to steal
-            if strategy_board[i[2]][1] == 0 and strategy_board[14 - i[2]][1] != 0:
-                move(i[0])
-                return
+        for j in strategy_board[8:14]:  # for all the balls on the enemy's side
+            if j[1] == 0: continue  # skip if the pit is empty
 
-        for j in strategy_board[8:14]:
-            if j[1] == 0: continue
             # if the enemy has a chance to steal from me
             if j[2] != 7 and (strategy_board[j[2]][1] == 0 or j[1] == 13) \
                     and strategy_board[14 - j[2]][0] != j[0] and \
                     (strategy_board[14 - j[2]][1] != 0 or j[1] == 13):
-                # if I can defend myself
+                """if the enemy doesn't end in his sum pit
+                if the end pit for the enemy is empty/he makes one circle, coming back to his first pit which is now empty
+                if the opposite pit isn't the enemy's pit, since it will be empty
+                if the opposite pit isn't empty or if the enemy makes a one circle, so every slot has at least one ball
+                """
+                # if the user can defend itself
                 if i[1] > i[0] and (i[2] <= j[2] or i[2] <= j[0]):
+                    """if the user has more balls in the pit than it's index (then it will reach the enemy's side)
+                    if the user's end slot is smaller than the enemy's end slot or smaller than the enemy's starting index 
+                    """
                     move(i[0])
                     return
 
-            # if the enemy has a chance for a second turn and I can ruin it
+            # if the enemy has a chance for a second turn and the user can ruin it
             if i[1] > i[0] and j[2] == 7 and i[2] <= j[0]:
+                """ if the user reaches the enemy's side
+                if the enemy can get a second turn
+                if the user's ending slot is smaller than the enemy's index
+                """
                 move(i[0])
                 return
 
+    # finding the max amount of marbles in a slot from the end of the board
     max = strategy_board[4][1]
     j = 4
     for i in range(4, 7):
@@ -79,6 +95,7 @@ def strategy(board):
         move(j)
         return
 
+    # finding the min amount of marbles in a slot from the beginning of the board
     min = strategy_board[1][1]
     j = 1
     for i in range(1, 4):
@@ -88,20 +105,13 @@ def strategy(board):
     if min != 0:
         move(j)
         return
-    # temp
-
-
-"""    move(randint(1, 6))
-    print("random")
-    return"""
-
-
-# print(board)
 
 
 def move(index):
+    """
+
+    """
     global server
-    # Make random move
     print(f"--Making a move from pit number {index}--")
 
     # Send Game Move message to server
@@ -113,78 +123,62 @@ def move(index):
     )
 
 
-def thread_recv_API():
-    """
-
-    """
-    global client
-
-    while 1:
-        try:
-            msg = eval(client.recv(BUFSIZ).decode('utf-8'))
-            print(msg)
-            if msg[0] == 'stop':
-                print("The GUI client stopped running. Exiting...")
-                # send to server quit
-                os._exit(1)
-            elif msg[0] == "Board request":
-                if not board_moves or type(board_moves[-1]) != bool:
-                    client.send("wait".encode('utf-8'))
-                else:
-                    client.send("->".join([str(j) for j in board_moves]).encode('utf-8'))
-        except SyntaxError:
-            exit()
-
-
 def server_recv():
-    global server, board_moves
+    """
 
-    GUI_client_talk_thread = Thread(target=lambda: thread_recv_API(), daemon=True)
-    GUI_client_talk_thread.start()
+    """
+    global server, client
+
+    """GUI_client_talk_thread = Thread(target=lambda: thread_recv_API(), daemon=True)
+    GUI_client_talk_thread.start()"""
     while True:
         try:
             msg_len = eval(server.recv(5).decode().lstrip("0"))
             msg = server.recv(msg_len).decode('utf-8')
             try:
                 data = json.loads(msg)
-            except:  # an error in the server
-                data = "server down"
-                board_moves.append(True)
+            except json.decoder.JSONDecodeError:  # an error in the server
+                # they will be times in non-competition mode when the server won't send a json type log
+                data = {"type": "Game over", "won": True}  # we assume we won by not having the log
             print(data)
 
             if data["type"] == "Board Update":
-                board_moves.append(" ".join([str(j) for j in data['board']]))
-                # ui.turn_lbl.setText("Your Turn: " + str(data["your turn"]))
-                if data["your turn"]:
-                    strategy(data['board'])
+                client.send(" ".join([str(j) for j in data['board']]).encode('utf-8'))
+                time.sleep(1)  # so the GUI client won't get two messages at once
+                if data["your turn"]: strategy(data['board'])  # make a move
 
             elif data["type"] == "Game Over":
-                board_moves.append(data['won'])
+                client.send("You won" if data["won"] else "You lose".encode('utf-8'))
+                time.sleep(1)  # so the GUI client won't get two messages at once
 
-        except OSError:
+            """In earlier versions the function also caught data types such as notification or error,
+            "but in competition mode it is not needed since the server never sends those type of messages"""
+
+        except OSError:  # the server disconnected
             exit()
-        except (NameError, SyntaxError, TypeError):  # errors in the server
+        except (NameError, SyntaxError, TypeError):  # errors in the server. The client remains to listen
             continue
 
 
 def board_window(id):
-    client.send("OK".encode('utf-8'))
-    print(client.recv(1024).decode('utf-8'))
+    """
+
+    """
+    client.send("OK".encode('utf-8'))  # telling the GUI client the game can begin the game
+    print(client.recv(1024).decode('utf-8'))  # the GUI client telling the server it's ready to begin
     client.send(("Game ID: " + str(id)).encode('utf-8'))
     server_recv()
-    """server_recv_thread = Thread(target=lambda x=ui: server_recv(x), daemon=True)
-    server_recv_thread.start()"""
 
 
 def start_game(name):
     """
 
     """
-    global server
+    global server, client
 
-    # if not name.isalnum():
-    #     client.send("Enter a name, not a digit".encode('utf-8'))
-    #     return -1
+    if not name.isalnum():
+        client.send("Enter a name, not a digit".encode('utf-8'))
+        return -1
 
     server.send(json.dumps({"type": "Login", "name": name}).encode('utf-8'))
     msg = json.loads(server.recv(BUFSIZ).decode()[5:])
@@ -193,25 +187,30 @@ def start_game(name):
         client.send(msg['data'].encode('utf-8'))
         return -1
 
-    # server.send(json.dumps({"type": "Start Game"}).encode('utf-8'))
-    # msg = json.loads(server.recv(BUFSIZ).decode()[5:])
-    # print(msg)
-    # if msg['type'] != 'Success':
-    #     client.send(msg['data'].encode('utf-8'))
-    #     return -1
+    # this code is only relevant for non-competition mode, to start the game manually.
+    """server.send(json.dumps({"type": "Start Game"}).encode('utf-8'))
+    msg = json.loads(server.recv(BUFSIZ).decode()[5:])  # sending game ID
+    print(msg)
+    if msg['type'] != 'Success':
+        client.send(msg['data'].encode('utf-8'))
+        return -1
+    game_id = msg['game_id']"""
 
-    game_id = 0  # msg['game_id']
+    # next, python client receives error/board update
+    game_id = 0  # in competition-mode there is no real game ID
     board_window(game_id)
     return 0
 
 
 def join_game(name, id):
     """
-
+    A function that lets you join a normal (not competition mode) game.
+    returns 0 if finds success, -1 if doesn't
     """
-    global server
+    global server, client
 
     if not name.isalnum() or not id.isdigit():
+        # send the client the error
         client.send("Name can't be a digit and the game ID has to be a digit".encode('utf-8'))
         return -1
 
@@ -219,41 +218,42 @@ def join_game(name, id):
     msg = json.loads(server.recv(BUFSIZ).decode()[5:])
     print(msg)
     if msg["type"] != 'Login Successfull':
+        # send the client the error
         client.send(msg['data'].encode('utf-8'))
         return -1
 
     server.send(json.dumps({"type": "Join Game", "game_id": eval(id)}).encode('utf-8'))
-    """msg = json.loads(server.recv(BUFSIZ).decode()[5:])
-    print(msg, "!!!")"""
+    # next, python client receives error/board update
     board_window(id)
     return 0
 
 
 def wait_for_API():
     """
-
+    Waiting for either a join game/start game command from the c# user.
     """
     try:
         while 1:
-            data = client.recv(1024).decode('utf-8')  # waiting for commands
+            data = client.recv(1024).decode('utf-8')  # waiting for command
             data = eval(data)  # the data arrives as a list form
             print("The GUI client sent:", data)
             if data[0] == 'start':
                 n = start_game(data[1])
-                if n != -1: break
+                if n != -1: break  # if there was no problem in the connection
             elif data[0] == 'join':
                 n = join_game(data[1], data[2])
-                if n != -1: break
-    except OSError:
-        # make an exit func
+                if n != -1: break  # if there was no problem in the connection
+
+    except OSError:  # the winform client disconnected
         exit()
 
 
 def connect_to_API():
     """
     connecting to the GUI on C#
+    Returning the GUI client's details
     """
-    # becoming a server
+    # becoming a server for the GUI
     HOST = "127.0.0.1"
     PORT = 45000
     SERVER = socket(AF_INET, SOCK_STREAM)
@@ -262,7 +262,7 @@ def connect_to_API():
     # waiting for the winform
     SERVER.listen(5)
     print("Waiting for connection...")
-    client, client_address = SERVER.accept()
+    client, client_address = SERVER.accept()  # accepting connection
     return client, client_address
 
 
@@ -286,4 +286,4 @@ finally:
     print(msg)
 
     client, client_address = connect_to_API()  # connect to the winform
-    wait_for_API()  # wait for commands from the user
+    wait_for_API()  # wait for commands from the graphics user

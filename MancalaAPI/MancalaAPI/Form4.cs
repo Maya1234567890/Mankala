@@ -20,13 +20,17 @@ namespace MancalaAPI
 
             label2.Parent = pictureBox1;
             label2.BackColor = Color.Transparent;
+            label1.Parent = pictureBox1;
+            label1.BackColor = Color.Transparent;
+            Point pt = this.PointToScreen(label1.Location);
+            label1.Location = pictureBox1.PointToClient(pt);
 
             Label[] holes = { hole_0, hole_1, hole_2, hole_3, hole_4, hole_5, hole_6, hole_7,
             hole_8, hole_9, hole_10, hole_11, hole_12, hole_13};
 
             for (int i = 0; i < holes.Length; i++)
             {
-                Point pt = this.PointToScreen(holes[i].Location);
+                pt = this.PointToScreen(holes[i].Location);
                 holes[i].Location = pictureBox2.PointToClient(pt);
                 holes[i].Parent = pictureBox2;
                 holes[i].BackColor = Color.Transparent;
@@ -37,65 +41,6 @@ namespace MancalaAPI
 
         }
 
-        public void BeginBoard(Label[] holes)
-        {
-            //Program.s.Send(Encoding.ASCII.GetBytes("The client Entered. Sending game ID..."));
-            //string gameID = Program.ReceiveMessage();
-            //label2.Text = gameID;
-
-            string data = Program.ReceiveMessage();
-
-            Console.WriteLine(data);
-
-            if (data.StartsWith("Error")) { }
-            else if (data.StartsWith("Game Over")) { }
-        }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-            Program.s.Send(Encoding.ASCII.GetBytes("['Board request']"));
-            string data = Program.ReceiveMessage();
-
-            Label[] holes = { hole_0, hole_1, hole_2, hole_3, hole_4, hole_5, hole_6, hole_7,
-            hole_8, hole_9, hole_10, hole_11, hole_12, hole_13};
-
-            if (data != "wait")
-            {
-                Console.WriteLine(data);
-                Program.data = data;
-
-                button1.Text = "Press Right";
-                button1.Enabled = false;
-
-
-                //while (data != "True" & data != "False")
-                //{
-                //    for (int i = 0; i < holes.Length; i++)
-                //    {
-                //        Console.WriteLine("before" + data);
-                //        if (i < 13)
-                //        {
-                //            holes[i].Text = data.Substring(0, data.IndexOf(" "));
-                //            data = data.Remove(0, data.IndexOf(" ") + 1);
-                //        }
-                //        else
-                //        {
-                //            holes[i].Text = data.Substring(0, data.IndexOf("-"));
-                //            data = data.Remove(0, data.IndexOf('-'));
-                //        }
-                //        Thread.Sleep(10);
-
-                //        Console.WriteLine("after" + data);
-                //    }
-                //    data = data.Remove(0, 2);
-                //    Console.WriteLine("after after" + data);
-                //}
-            }
-            else
-            { //message box}
-
-            }
-        }
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
@@ -105,36 +50,26 @@ namespace MancalaAPI
             //capture right arrow key
             if (keyData == Keys.Right)
             {
-                if (Program.data is null) return true;
-                if (Program.data != "True" & Program.data != "False")
+                string data = Program.ReceiveMessage();
+
+                if (!data.StartsWith("You"))
                 {
-                    if (Program.data[0] == '-') Program.data = Program.data.Remove(0, 2);
-                    if (Program.data == "True" || Program.data == "False") return true;
-
-
-                    while (Program.data.IndexOf(" ") < Program.data.IndexOf("-") &
-                        Program.data.IndexOf(" ") != -1)
+                    for (int i = 0; i < holes.Length - 1; i++)
                     {
-                        holes[Program.c].Text = Program.data.Substring(0, Program.data.IndexOf(" "));
-                        Program.data = Program.data.Remove(0, Program.data.IndexOf(" ") + 1);
-                        Program.c++;
+                        holes[i].Text = data.Substring(0, Program.data.IndexOf(" "));
+                        data = data.Remove(0, Program.data.IndexOf(" ") + 1);
                     }
-                    
-                    
-                    Console.WriteLine(Program.data);
-                    hole_13.Text = Program.data.Substring(0, Program.data.IndexOf("-"));
-                    Program.data = Program.data.Remove(0, Program.data.IndexOf('-'));
-                    Program.c = 0;
-                    
+
+                    hole_13.Text = data;
                 }
                 else
                 {
-                    Thread.Sleep(3000);
-                    EndWindow form5 = new EndWindow();
-                    form5.Show();
-                    Visible = false;
+                    label1.Text = data;
+                    Thread.Sleep(1000);
                 }
+
             }
+
             return true;
         }
     }

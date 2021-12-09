@@ -46,7 +46,7 @@
             this.hole_10 = new System.Windows.Forms.Label();
             this.hole_9 = new System.Windows.Forms.Label();
             this.hole_8 = new System.Windows.Forms.Label();
-            this.button1 = new System.Windows.Forms.Button();
+            this.label1 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             this.SuspendLayout();
@@ -254,27 +254,24 @@
             this.hole_8.Text = "4";
             this.hole_8.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // button1
+            // label1
             // 
-            this.button1.BackColor = System.Drawing.Color.Cornsilk;
-            this.button1.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.button1.Font = new System.Drawing.Font("Snap ITC", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(64)))), ((int)(((byte)(0)))));
-            this.button1.Location = new System.Drawing.Point(600, 468);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(251, 42);
-            this.button1.TabIndex = 27;
-            this.button1.Text = "Start Show";
-            this.button1.UseVisualStyleBackColor = false;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.label1.AutoSize = true;
+            this.label1.BackColor = System.Drawing.SystemColors.GrayText;
+            this.label1.Font = new System.Drawing.Font("Snap ITC", 16F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.ForeColor = System.Drawing.Color.Cornsilk;
+            this.label1.Location = new System.Drawing.Point(299, 113);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(0, 42);
+            this.label1.TabIndex = 27;
+            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // Board
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(863, 514);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.hole_8);
             this.Controls.Add(this.hole_9);
             this.Controls.Add(this.hole_10);
@@ -321,6 +318,6 @@
         private System.Windows.Forms.Label hole_10;
         private System.Windows.Forms.Label hole_9;
         private System.Windows.Forms.Label hole_8;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Label label1;
     }
 }
