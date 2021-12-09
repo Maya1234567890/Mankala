@@ -1,3 +1,10 @@
+"""
+Mancala Client For Competition Mode
+Authors: Maya Vaksin & Mike Shlapakov
+The program connects with the mancala server & the GUI winform client and runs the game via a strategy bot & board graphics
+Runs on python, c# on windows
+"""
+
 from socket import *
 import json
 import time
@@ -9,15 +16,19 @@ client = None
 
 def calculate_end_hole(i, hole):
     """
-
+    the function receives the current pit on the board and the number of marbles it has.
+    the function calculates what slot will the current set of marbles end in
+    it returns the place of the last slot on the board.
     """
     sum = i
-    for j in range(hole):
+    for j in range(hole):   # go over the board number of marbles times
+        # skipping the sum slot for the enemy and making the user go in a circle across the board
         if (8 <= i <= 13 and sum == 1) or (1 <= i <= 6 and sum == 0):
             sum = 13
+        # if it's one of the player's slots and it needs to skip the enemy's sum pit
         elif 1 <= i <= 6 and sum == 8:
             sum = 6
-        else:
+        else:   # the marbles simply go over normal slots
             sum = sum - 1
     print("the last ball from pit", i, "will fall in hole number", sum)
     return sum
@@ -25,7 +36,17 @@ def calculate_end_hole(i, hole):
 
 def strategy(board):
     """
+    the function receives a lost board with the current positions in the game.
 
+    the function chooses what is the best course of action with this strategy:
+    1) extra turn
+    2) a chance for the player to steal marbles
+    3) if the enemy can steal marbles from the player, the player trues to find a way to stop it from happening
+    4) if the enemy has a chance for an extra turn, the player trues to find a way to stop it from happening
+    5) taking the most amount of marbles from one of the three slots at the end
+    6) taking the least amount of marbles from one of the three slots at the beginning
+
+    the function makes a turn and returns.
     """
 
     strategy_board = []  # for each slot: [slot number, amount of balls in the slot, the ending slot for the game move]
@@ -109,7 +130,7 @@ def strategy(board):
 
 def move(index):
     """
-
+    the function sends the server the player's move
     """
     global server
     print(f"--Making a move from pit number {index}--")
@@ -125,12 +146,11 @@ def move(index):
 
 def server_recv():
     """
-
+    the function forever listens to the server after a login (for competition mode).
+    it talks with the GUI client and updates it about the game.
     """
     global server, client
 
-    """GUI_client_talk_thread = Thread(target=lambda: thread_recv_API(), daemon=True)
-    GUI_client_talk_thread.start()"""
     while True:
         try:
             msg_len = eval(server.recv(5).decode().lstrip("0"))
@@ -162,17 +182,20 @@ def server_recv():
 
 def board_window(id):
     """
-
+    the function gets the game's ID
+    it talks with the client before going into the game, as to set the basis for it
     """
     client.send("OK".encode('utf-8'))  # telling the GUI client the game can begin the game
     print(client.recv(1024).decode('utf-8'))  # the GUI client telling the server it's ready to begin
     client.send(("Game ID: " + str(id)).encode('utf-8'))
-    server_recv()
+    server_recv()   # starting the actual gameplay
 
 
 def start_game(name):
     """
-
+    the function gets the user's name sent by the GUI client
+    it makes a login with the server (competition mode) and checks for errors
+    returns 0 if finds success, -1 if doesn't
     """
     global server, client
 
@@ -205,6 +228,7 @@ def start_game(name):
 def join_game(name, id):
     """
     A function that lets you join a normal (not competition mode) game.
+    gets the user's name and the game's ID from the GUI client
     returns 0 if finds success, -1 if doesn't
     """
     global server, client

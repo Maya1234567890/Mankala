@@ -4,15 +4,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Text;
-using System.Net.Sockets;
+using System.Net.Sockets; // socket connection to the python server
 
 namespace MancalaAPI
 {
     internal static class Program
     {
-        public static Socket s;
-        public static string data;
-        public static int c = 0;
+        public static Socket s; // a global variable for the python socket
+
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
@@ -22,12 +21,15 @@ namespace MancalaAPI
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new MainMenu());
-            s.Send(Encoding.ASCII.GetBytes("['stop']"));
-            Environment.Exit(1);
+            s.Send(Encoding.ASCII.GetBytes("['stop']"));  // signeling the python server the GUI stopped
+            Environment.Exit(1);  // exit everything
         }
 
         public static string ReceiveMessage()
         {
+          // a global function for receiving messages from the python server
+          // returns the data which got sent
+
             byte[] bytes = new byte[3000];
             int byteCount = 0;
             // chatch exception
